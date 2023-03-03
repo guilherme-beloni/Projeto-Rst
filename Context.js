@@ -8,11 +8,12 @@ export default Context = ({ children }) => {
   const [imagemProduto, setImagemProduto] = useState('');
   const [produtos, setProdutos] = useState([]);
   const [total, setTotal] = useState(0);
+  const [email, setEmail] = useState('');
 
 
 
 return (
-    <DataContext.Provider value={{ nomeProduto, setNomeProduto, valorProduto, setValorProduto, imagemProduto, setImagemProduto, produtos, setProdutos, total, setTotal}}>
+    <DataContext.Provider value={{ nomeProduto, setNomeProduto, valorProduto, setValorProduto, imagemProduto, setImagemProduto, produtos, setProdutos, total, setTotal, email, setEmail}}>
       {children}
     </DataContext.Provider>
   );

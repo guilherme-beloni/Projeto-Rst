@@ -1,39 +1,88 @@
-import { FlatList , BackHandler} from 'react-native';
-import { Card, Paragraph, Button, List } from 'react-native-paper';
-import { useContext } from 'react';
+import { FlatList, BackHandler, ScrollView } from 'react-native';
+import { Card, Paragraph, Button, List, TextInput } from 'react-native-paper';
+import { useContext, useState, useEffect } from 'react';
 import { DataContext } from '../Context';
-
+import firebase from '../Firebase';
 
 const CarrinhoScreen = ({ navigation }) => {
   let { produtos, setProdutos, total, setTotal } = useContext(DataContext);
+  let [ dbprodutos, setDbProdutos ] = useState([]);
+  let [ email, setEmail ] = useState('');
+  
+    useEffect (() => {
+    setDbProdutos([]);
+    selecionarTodos();
+  }, []);
+
+  const selecionarTodos = () => {
+    let itens = [];
+    firebase.database().ref('dbPedidos').orderByChild("email").on('value', (snapshot) => {
+      snapshot.forEach((linha) => {
+        itens.push({
+          key: linha.key,
+          produtos: linha.val().produtos,
+          email: linha.val().email,
+        });
+      }); 
+      setDbProdutos(itens);
+    }); 
+  }
+  
+
+  
+  
 
   const excluiProduto = (index) => {
     let produto = produtos;
     setTotal(total - produto[index].valor * produto[index].quantidade);
-    produto = produto.filter((item) => item !== produto[index] );
+    produto = produto.filter((item) => item !== produto[index]);
     setProdutos(produto);
   };
 
+  
+
+
+  const verificaQtd = () => {
+    if (total != 0) {
+      firebase.database().ref('dbPedidos').push({info_prdutos: produtos});
+    }
+  }
+
+  const verificaEmail = () => {
+    if (email != '') {
+      firebase.database().ref('dbPedidos').push({email: email});
+      alert('O seu pedido foi entregue ao restaurante, obrigado!');
+      navigation.navigate('Menu')
+    } else {
+      alert('Por favor, digite seu e-mail.')
+    }
+  }
+  
+
+
   const msgFinal = () => {
     let produto = produtos;
-    if (produto != 0){
-    alert('O seu pedido foi entregue ao restaurante, obrigado!');
-    navigation.navigate('Menu')
+    if (produto != 0) {
+      verificaEmail()  
+  
+      verificaQtd()  
+
     } else {
-        alert('Nenhum produto adicionado!');
+      alert('O carrinho está vazio!');
     }
   };
-       
+  
+  const contCompra = () => {
+    navigation.navigate('Menu');
+  };
 
   return (
+    <ScrollView>
     <Card>
       <Card.Title title="Meu Carrinho:" />
       <Card.Content>
         {total != 0 ? (
-          <Paragraph>
-            Valor total: {'R$' + total  + ',00'}
-
-          </Paragraph>
+          <Paragraph>Valor total: {'R$' + total + ',00'}</Paragraph>
         ) : (
           <></>
         )}
@@ -49,28 +98,53 @@ const CarrinhoScreen = ({ navigation }) => {
                   <List.Item title={'Valor: ' + item.valor} />
                   <List.Item
                     right={(props) => (
-                      
                       <Button
-                        color='#FF0000'
+                        color="#FF0000"
                         icon="delete"
                         mode="contained"
                         onPress={() => excluiProduto(index)}>
                         Excluir
-                      </Button>                      
+                      </Button>
                     )}
                   />
                 </List.Accordion>
-                
               );
             }}
-          /> 
+          />
         ) : (
           <Paragraph>Nenhum produto adicionado!</Paragraph>
         )}
-        <Button style={{marginTop: 50}} color='#00FF7F' mode='contained' onPress={msgFinal}>Fazer Pedido</Button>
       </Card.Content>
+      
+      <Card.Content>
+        <TextInput 
+        onChangeText={setEmail}
+        value={email}
+            mode="outlined"
+            label="Digite seu e-mail"
+            placeholder="email"
+           />
+      </Card.Content>
+      <Card.Actions style={{ alignSelf: 'center' }}>
+        <Button
+          style={{ padding: 5, marginRight: 10 }}
+          icon="plus"
+          mode="contained"
+          onPress={contCompra}>
+          Adicionar
+        </Button>
+        <Button
+          style={{ padding: 5, marginRight: 5}}
+          icon="send"
+          color="#00FF7F"
+          mode="contained"
+          onPress={msgFinal}>
+          Finalizar
+        </Button>
+      </Card.Actions>
     </Card>
+    </ScrollView>
   );
 };
-  
+
 export default CarrinhoScreen;

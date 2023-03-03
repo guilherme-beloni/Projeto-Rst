@@ -1,36 +1,34 @@
+import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Ionicons } from '@expo/vector-icons';
 import HomeScreen from './components/HomeScreen';
+import CategoriasScreen from './components/CategoriasScreen';
+import ServicosScreen from './components/ServicosScreen';
 import CarrinhoScreen from './components/CarrinhoScreen';
-import ProdutoScreen from './components/ProdutoScreen'
+import ProdutoScreen from './components/ProdutoScreen';
 import Context from './Context';
 
-const Tab = createBottomTabNavigator();
+const Drawer = createDrawerNavigator();
 
-export default App = () => {
+export default function App() {
   return (
     <Context>
       <NavigationContainer>
-        <Tab.Navigator
-          screenOptions={({ route }) => ({
-            tabBarIcon: ({ color, size }) => {
-              if (route.name == 'Menu')
-                return <Ionicons name="home" size={size} color={color} />;
-              else if (route.name == 'Carrinho')
-                return <Ionicons name="ios-cart" size={size} color={color} />;
-            },
-          })}>
-          <Tab.Screen name="Menu" component={HomeScreen} />
-          <Tab.Screen name="Carrinho" component={CarrinhoScreen} />
-          <Tab.Screen
+        <Drawer.Navigator useLegacyImplementation initialRouteName="Menu">
+          <Drawer.Screen name="Menu" component={HomeScreen} />
+          <Drawer.Screen
+            name="Gerenciar Categorias"
+            component={CategoriasScreen}
+          />
+          <Drawer.Screen name="Gerenciar Serviços" component={ServicosScreen} />
+
+          <Drawer.Screen name="Carrinho" component={CarrinhoScreen} />
+          <Drawer.Screen
             name="Produto"
             component={ProdutoScreen}
-            options={{ display: 'none', tabBarButton: () => null }}
-            style={{alignSelf: 'center'}}
+            options={{ drawerItemStyle: { display: 'none' } }}
           />
-        </Tab.Navigator> 
+        </Drawer.Navigator>
       </NavigationContainer>
     </Context>
   );
-};
+}

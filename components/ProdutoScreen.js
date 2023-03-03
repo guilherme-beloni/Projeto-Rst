@@ -2,6 +2,7 @@ import { Image, Dimensions, ScrollView } from 'react-native';
 import { Card, Button, Title, TextInput, Paragraph } from 'react-native-paper';
 import { useContext, useState } from 'react';
 import { DataContext } from '../Context';
+import { styles } from './Utils';
 
 const ProdutoScreen = ({ navigation }) => {
   let [qtdProduto, setQtdProduto] = useState(1);
@@ -17,41 +18,37 @@ const ProdutoScreen = ({ navigation }) => {
     total,
     setTotal,
   } = useContext(DataContext);
-  
+
   const acrescentar = () => {
-      setQtdProduto(qtdProduto + 1),
+    setQtdProduto(qtdProduto + 1),
       setTotal(Number(total) + Number(valorProduto));
   };
-
 
   let decrementar = () => {
     if (qtdProduto >= 2) {
-      setQtdProduto (qtdProduto - 1)
+      setQtdProduto(qtdProduto - 1);
       setTotal(Number(total) - Number(valorProduto));
-    } 
+    }
   };
-   
-  const confirmarPedido = () => {   
-      let produto = produtos;
-      produto.push({
-        nome: nomeProduto,
-        valor: valorProduto,
-        quantidade: qtdProduto,
-      });
-      setProdutos(produto);
-      setTotal(Number(total) + Number(valorProduto));
-      setNomeProduto(null);
-      setValorProduto(0);
-      setImagemProduto(null);
-      setQtdProduto(1);
-      navigation.navigate('Carrinho');
-    
+
+  const confirmarPedido = () => {
+    let produto = produtos;
+    produto.push({
+      nome: nomeProduto,
+      valor: valorProduto,
+      quantidade: qtdProduto,
+    });
+    setProdutos(produto);
+    setTotal(Number(total) + Number(valorProduto));
+    setNomeProduto(null);
+    setValorProduto(0);
+    setImagemProduto(null);
+    setQtdProduto(1);
+    navigation.navigate('Carrinho');
   };
-   
-  const text = () => {
-    
-  }
-    
+
+  const text = () => {};
+
   return (
     <ScrollView>
       <Card>
@@ -67,24 +64,43 @@ const ProdutoScreen = ({ navigation }) => {
               alignSelf: 'center',
             }}
           />
-  
-          <Paragraph>Ingredientes: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-          </Paragraph>
-          <Button style={{marginTop: 30}}  onPress={acrescentar}>+</Button>
-          <Paragraph style={{alignSelf: 'center', marginBotton: 30, fontSize: 20}}>{qtdProduto}</Paragraph>
-          <Button onPress={decrementar}>-</Button>
 
-          <Button icon='cart' style={{marginTop: 30}} mode='contained' color='#841584' onPress={() => confirmarPedido()}>
+          <Paragraph>
+            Ingredientes: Lorem ipsum dolor sit amet, consectetur adipiscing
+            elit, sed do eiusmod tempor incididunt ut labore et dolore magna
+            aliqua.
+          </Paragraph>
+
+          <Card.Actions style={{marginTop:50, alignSelf: 'center' }}>
+            <Button
+              icon="minus"
+              style={styles.buttonCrud}
+              onPress={decrementar}
+              mode="contained"
+              color="#841584"></Button>
+            <Paragraph
+              style={{ marginLeft: 8, alignSelf: 'center', fontSize: 20 }}>
+              {qtdProduto}
+            </Paragraph>
+            <Button
+              style={styles.buttonCrud}
+              icon="plus"
+              onPress={acrescentar}
+              mode="contained"
+              color="#841584"></Button>
+          </Card.Actions>
+
+          <Button
+            icon="cart"
+            style={{ marginTop: 20 }}
+            color="#841584"
+            onPress={() => confirmarPedido()}>
             Adicionar ao carrinho
           </Button>
         </Card.Content>
       </Card>
     </ScrollView>
-    
   );
 };
-
-
-
 
 export default ProdutoScreen;
