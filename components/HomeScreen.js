@@ -15,7 +15,6 @@ export default HomeScreen = ({ navigation }) => {
   };
 
   return (
-    
     <ScrollView>
       <Card>
         <Card.Title title="Pizza Portuguesa" subtitle="Ingredintes frescos" />
@@ -30,8 +29,8 @@ export default HomeScreen = ({ navigation }) => {
           />
           <Paragraph>R$ 70,00</Paragraph>
           <Button
-            color='#841584'
-            style={{marginTop: 10}}
+            color="#841584"
+            style={{ marginTop: 10 }}
             mode="contained"
             onPress={() =>
               selecionarProduto('Pizza Portuguesa', 70.0, './imgs/pizza.jpg')
@@ -56,8 +55,8 @@ export default HomeScreen = ({ navigation }) => {
           />
           <Paragraph>R$ 30,00</Paragraph>
           <Button
-            style={{marginTop: 10}}
-            color='#841584'
+            style={{ marginTop: 10 }}
+            color="#841584"
             mode="contained"
             onPress={() =>
               selecionarProduto(
@@ -81,8 +80,8 @@ export default HomeScreen = ({ navigation }) => {
               />
               <Paragraph>R$ 35,00</Paragraph>
               <Button
-                color='#841584'
-                style={{marginTop: 10}}
+                color="#841584"
+                style={{ marginTop: 10 }}
                 mode="contained"
                 onPress={() =>
                   selecionarProduto('X-Burger', 35.0, './imgs/burger.jpg')

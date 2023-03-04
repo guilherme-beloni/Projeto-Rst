@@ -71,7 +71,7 @@ const ProdutoScreen = ({ navigation }) => {
             aliqua.
           </Paragraph>
 
-          <Card.Actions style={{marginTop:50, alignSelf: 'center' }}>
+          <Card.Actions style={{ marginTop: 50, alignSelf: 'center' }}>
             <Button
               icon="minus"
               style={styles.buttonCrud}
