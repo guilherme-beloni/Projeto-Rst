@@ -47,7 +47,7 @@ const ProdutoScreen = ({ navigation }) => {
     navigation.navigate('Carrinho');
   };
 
-  const text = () => {};
+  
 
   return (
     <ScrollView>
@@ -71,7 +71,7 @@ const ProdutoScreen = ({ navigation }) => {
             aliqua.
           </Paragraph>
 
-          <Card.Actions style={{marginTop:50, alignSelf: 'center' }}>
+          <Card.Actions style={{ marginTop: 50, alignSelf: 'center' }}>
             <Button
               icon="minus"
               style={styles.buttonCrud}

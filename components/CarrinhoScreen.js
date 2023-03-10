@@ -3,33 +3,73 @@ import { Card, Paragraph, Button, List, TextInput } from 'react-native-paper';
 import { useContext, useState, useEffect } from 'react';
 import { DataContext } from '../Context';
 import firebase from '../Firebase';
+import { styles, valorFormatado } from './Utils';
 
 const CarrinhoScreen = ({ navigation }) => {
   let { produtos, setProdutos, total, setTotal } = useContext(DataContext);
-  let [ dbprodutos, setDbProdutos ] = useState([]);
-  let [ email, setEmail ] = useState('');
-  
-    useEffect (() => {
+  let [dbprodutos, setDbProdutos] = useState([]);
+  let [email, setEmail] = useState('');
+  let [dbEndereco, setDbEndereco] = useState([]);
+  let {
+    tipoEndereco, setTipoEndereco,
+    logradouro, setLogradouro,
+    numero, setNumero,
+    cidade, setCidade,
+    estado, setEstado,
+    bairro, setBairro
+  } = useContext(DataContext);
+
+  useEffect(() => {
     setDbProdutos([]);
     selecionarTodos();
+    selecionarTodosEnderecos();
   }, []);
 
   const selecionarTodos = () => {
     let itens = [];
-    firebase.database().ref('dbPedidos').orderByChild("email").on('value', (snapshot) => {
-      snapshot.forEach((linha) => {
-        itens.push({
-          key: linha.key,
-          produtos: linha.val().produtos,
-          email: linha.val().email,
+    firebase
+      .database()
+      .ref('dbProdutos')
+      .orderByChild('logradouro')
+      .on('value', (snapshot) => {
+        snapshot.forEach((linha) => {
+          itens.push({
+            key: linha.key,
+            produtos: linha.val().produtos,
+            email: linha.val().email,
+          });
         });
-      }); 
-      setDbProdutos(itens);
-    }); 
-  }
+        setDbProdutos(itens);
+      });
+  };
+
+
+  const selecionarTodosEnderecos = () => {
+    let itens = [];
+    firebase
+      .database()
+      .ref('dbEndereco')
+      .orderByChild('logradouro')
+      .on('value', (snapshot) => {
+        snapshot.forEach((linha) => {
+          itens.push({
+            key: linha.key,
+            tipoEndereco: linha.val().tipoEndereco,
+            logradouro: linha.val().logradouro,
+            numero: linha.val().numero,
+            cidade: linha.val().cidade,
+            estado: linha.val().estado,
+            bairro: linha.val().bairro
+          });
+        });
+        setDbEndereco(itens);
+      });
+  };
   
 
-  
+  const novoEndereco = () => {
+    direciona('Endereços')
+  }
   
 
   const excluiProduto = (index) => {
@@ -40,109 +80,135 @@ const CarrinhoScreen = ({ navigation }) => {
   };
 
   
-
-
-  const verificaQtd = () => {
-    if (total != 0) {
-      firebase.database().ref('dbPedidos').push({info_prdutos: produtos});
-    }
-  }
-
-  const verificaEmail = () => {
-    if (email != '') {
-      firebase.database().ref('dbPedidos').push({email: email});
-      alert('O seu pedido foi entregue ao restaurante, obrigado!');
-      navigation.navigate('Menu')
+  const verificaEnvio = () => {
+    if (total != 0 && email != '') {
+      try {firebase.database().ref('dbProdutos').push({ info_produtos: produtos, email: email });
+      navigation.navigate('Endereco')
+      } catch {
+        alert('Erro ao inserir registro!'+e)
+      }      
     } else {
-      alert('Por favor, digite seu e-mail.')
-    }
-  }
-  
+      alert('Por favor, digite seu e-mail para confirmar o pedido!');
+      }
+  };
 
-
+ 
   const msgFinal = () => {
     let produto = produtos;
     if (produto != 0) {
-      verificaEmail()  
-  
-      verificaQtd()  
-
+      verificaEnvio();
+      
+      //clearStates();
     } else {
       alert('O carrinho está vazio!');
     }
   };
+
   
+
+  const direciona = (page) => {
+    let dir = navigation.navigate(page);
+  }
+
   const contCompra = () => {
     navigation.navigate('Menu');
   };
 
   return (
     <ScrollView>
-    <Card>
-      <Card.Title title="Meu Carrinho:" />
-      <Card.Content>
-        {total != 0 ? (
-          <Paragraph>Valor total: {'R$' + total + ',00'}</Paragraph>
-        ) : (
-          <></>
-        )}
-        {produtos.length ? (
-          <FlatList
-            data={produtos}
-            renderItem={({ item, index }) => {
-              return (
-                <List.Accordion
-                  title={item.nome}
-                  left={(props) => <List.Icon icon="star" />}>
-                  <List.Item title={'Quantidade: ' + item.quantidade} />
-                  <List.Item title={'Valor: ' + item.valor} />
-                  <List.Item
-                    right={(props) => (
-                      <Button
-                        color="#FF0000"
-                        icon="delete"
-                        mode="contained"
-                        onPress={() => excluiProduto(index)}>
-                        Excluir
-                      </Button>
-                    )}
-                  />
-                </List.Accordion>
-              );
-            }}
-          />
-        ) : (
-          <Paragraph>Nenhum produto adicionado!</Paragraph>
-        )}
-      </Card.Content>
-      
-      <Card.Content>
-        <TextInput 
-        onChangeText={setEmail}
-        value={email}
+      <Card>
+        <Card.Title title="Meu Carrinho:" />
+        <Card.Content>
+          {total != 0 ? (
+            <Paragraph>Valor total: {valorFormatado(total)}</Paragraph>
+          ) : (
+            <></>
+          )}
+          {produtos.length ? (
+            <FlatList
+              data={produtos}
+              renderItem={({ item, index }) => {
+                return (
+                  <List.Accordion
+                    title={item.nome}
+                    left={(props) => <List.Icon icon="star" />}>
+                    <List.Item title={'Quantidade: ' + item.quantidade} />
+                    <List.Item title={'Valor: ' + valorFormatado(item.valor)} />
+                    <List.Item
+                      right={(props) => (
+                        <Button
+                          color="#FF0000"
+                          icon="delete"
+                          mode="contained"
+                          onPress={() => excluiProduto(index)}>
+                          Excluir
+                        </Button>
+                      )}
+                    />
+                  </List.Accordion>
+                );
+              }}
+            />
+          ) : (
+            <Paragraph>Nenhum produto adicionado!</Paragraph>
+          )}
+        </Card.Content>
+
+        <Card.Content>
+          <TextInput
+            onChangeText={setEmail}
+            value={email}
             mode="outlined"
             label="Digite seu e-mail"
-            placeholder="email"
-           />
-      </Card.Content>
-      <Card.Actions style={{ alignSelf: 'center' }}>
-        <Button
-          style={{ padding: 5, marginRight: 10 }}
-          icon="plus"
-          mode="contained"
-          onPress={contCompra}>
-          Adicionar
-        </Button>
-        <Button
-          style={{ padding: 5, marginRight: 5}}
-          icon="send"
-          color="#00FF7F"
-          mode="contained"
-          onPress={msgFinal}>
-          Finalizar
-        </Button>
-      </Card.Actions>
-    </Card>
+            placeholder="e-mail"
+          />
+        </Card.Content>
+
+        <Card.Actions style={{ alignSelf: 'center' }}>
+          <Button
+            style={{ padding: 5, marginRight: 10 }}
+            icon="plus"
+            mode="contained"
+            color="#841584"
+            onPress={contCompra}>
+            Adicionar
+          </Button>
+          <Button
+            style={{ padding: 5, marginRight: 5 }}
+            icon="send"
+            color="#00FF7F"
+            mode="contained"
+            onPress={msgFinal}>
+            Finalizar
+          </Button>
+        </Card.Actions>
+         
+      </Card>
+      <List.Section>
+        <List.Subheader>Endereço selecionado:</List.Subheader>
+        <FlatList
+          data={dbEndereco}
+          renderItem={({ item }) => {
+            return (
+              <List.Item
+                title={item.logradouro}
+                left={(props) => <List.Icon icon="star" />}
+                onPress=''
+              />
+            );
+          }}
+        />
+      </List.Section>
+      <Button
+                
+                style={{ marginTop: 10 }}
+                mode="contained"
+                onPress={() =>
+                  novoEndereco()
+                }>
+                Novo
+              </Button>
+      
     </ScrollView>
   );
 };
