@@ -3,7 +3,6 @@ import { Card, Paragraph, Button, List, TextInput } from 'react-native-paper';
 import { useContext, useState, useEffect } from 'react';
 import { DataContext } from '../Context';
 import firebase from '../Firebase';
-import { styles } from './Utils';
 import { valorFormatado } from './Utils';
 
 const CarrinhoScreen = ({ navigation }) => {
@@ -11,44 +10,13 @@ const CarrinhoScreen = ({ navigation }) => {
   let [dbprodutos, setDbProdutos] = useState([]);
   let [email, setEmail] = useState('');
   let [dbEndereco, setDbEndereco] = useState([]);
-  let {
-    tipoEndereco,
-    setTipoEndereco,
-    logradouro,
-    setLogradouro,
-    numero,
-    setNumero,
-    cidade,
-    setCidade,
-    estado,
-    setEstado,
-    bairro,
-    setBairro,
-  } = useContext(DataContext);
 
   useEffect(() => {
     setDbProdutos([]);
     selecionarTodos();
     selecionarTodosEnderecos();
   }, []);
-
-  const selecionar = (
-    key,
-    tipoEndereco,
-    logradouro,
-    numero,
-    cidade,
-    estado,
-    bairro
-  ) => {
-    setKey(key);
-    setTipoEndereco(tipoEndereco);
-    setLogradouro(logradouro);
-    setNumero(numero);
-    setCidade(cidade);
-    setEstado(estado);
-    setBairro(bairro);
-  };
+  
 
   const selecionarTodos = () => {
     let itens = [];
@@ -67,7 +35,7 @@ const CarrinhoScreen = ({ navigation }) => {
         setDbProdutos(itens);
       });
   };
-
+    
   const selecionarTodosEnderecos = () => {
     let itens = [];
     firebase
@@ -89,7 +57,7 @@ const CarrinhoScreen = ({ navigation }) => {
         setDbEndereco(itens);
       });
   };
-
+  
   const novoEndereco = () => {
     direciona('Endereços');
   };
@@ -176,78 +144,17 @@ const CarrinhoScreen = ({ navigation }) => {
           )}
         </Card.Content>
 
-        <Card.Content>
+        <Card.Content>  
           <TextInput
             onChangeText={setEmail}
             value={email}
-            mode="outlined"
+            mode="outlined"  
             label="Digite seu e-mail"
             placeholder="e-mail"
           />
         </Card.Content>
 
-        <Card.Actions style={{ alignSelf: 'center', display:'none' }}> ////////////////////////////////////
-          <Card style={{ margin: 10,}}>
-            <Card.Title
-              title="Gerenciar Endereços"
-              subtitle="Dados dos endereços cadastrados"
-            />
-            <Card.Content>
-              <Paragraph style={{ marginTop: 20 }}>
-                Tipo do endereço:{' '}
-              </Paragraph>
-              <TextInput
-                onChangeText={setTipoEndereco}
-                value={tipoEndereco}
-                mode="outlined"
-                label="Informe o tipo de endereço"
-                placeholder="Tipo de endereço"
-              />
-              <Paragraph style={{ marginTop: 20 }}>Logradouro: </Paragraph>
-              <TextInput
-                onChangeText={setLogradouro}
-                value={logradouro}
-                mode="outlined"
-                label="Informe o logradouro"
-                placeholder="Logradouro"
-              />
-              <Paragraph style={{ marginTop: 20 }}>Número: </Paragraph>
-              <TextInput
-                onChangeText={setNumero}
-                value={numero}
-                mode="outlined"
-                label="Informe o número"
-                placeholder="Numero"
-              />
-              <Paragraph style={{ marginTop: 20 }}>Bairro: </Paragraph>
-              <TextInput
-                onChangeText={setBairro}
-                value={bairro}
-                mode="outlined"
-                label="Informe o bairro"
-                placeholder="Bairro"
-              />
-              <Paragraph style={{ marginTop: 20 }}>Cidade: </Paragraph>
-              <TextInput
-                onChangeText={setCidade}
-                value={cidade}
-                mode="outlined"
-                label="Informe a cidade"
-                placeholder="Cidade"
-              />
-              <Paragraph style={{ marginTop: 20 }}>Estado: </Paragraph>
-              <TextInput
-                //style={{display: 'none'}}
-                onChangeText={setEstado}
-                value={estado}
-                mode="outlined"
-                label="Informe o estado"
-                placeholder="Estadoo"
-              />
-            </Card.Content>
-            
-          </Card>
-
+        <Card.Actions style={{ alignSelf: 'center' }}>
           <Button
             style={{ padding: 5, marginRight: 10 }}
             icon="plus"
@@ -275,17 +182,7 @@ const CarrinhoScreen = ({ navigation }) => {
               <List.Item
                 title={item.tipoEndereco}
                 left={(props) => <List.Icon icon="star" />}
-                onPress={() =>
-                  selecionar(
-                    item.key,
-                    item.tipoEndereco,
-                    item.logradouro,
-                    item.numero,
-                    item.cidade,
-                    item.estado,
-                    item.bairro
-                  )
-                }
+                onPress=""
               />
             );
           }}
@@ -294,6 +191,7 @@ const CarrinhoScreen = ({ navigation }) => {
       <Button
         style={{ marginTop: 10 }}
         color="#841584"
+        
         onPress={() => novoEndereco()}>
         Novo
       </Button>

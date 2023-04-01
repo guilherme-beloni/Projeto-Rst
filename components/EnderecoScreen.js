@@ -11,38 +11,21 @@ export default function CategoriasScreen() {
   let [botaoAlterarExcluir, setBotaoAlterarExcluir] = useState(true);
   let [botaoInserir, setBotaoInserir] = useState(false);
   let {
-    tipoEndereco, setTipoEndereco,
-    logradouro, setLogradouro,
-    numero, setNumero,
-    cidade, setCidade,
-    estado, setEstado,
-    bairro, setBairro
+    tipoEndereco,
+    setTipoEndereco,
+    logradouro,
+    setLogradouro,
+    numero,
+    setNumero,
+    cidade,
+    setCidade,  
+    estado,
+    setEstado,
+    bairro,
+    setBairro,
   } = useContext(DataContext);
 
-
-
-  /*
-  const confirmarPedido = () => {
-    let endereco = enderecos;
-    endereco.push({
-      tipoEndereco: tipoEndereco,
-      logradouro: logradouro,
-      numero: numero,
-      cidade: cidade,
-      estado: estado,
-      bairro: bairro
-    });
-    setProdutos(produto);
-    setTotal(Number(total) + Number(valorProduto));
-    setNomeProduto(null);
-    setValorProduto(0);
-    setImagemProduto(null);
-    setQtdProduto(1);
-    navigation.navigate('Carrinho');
-  };
-  */
-
-  useEffect(() => {
+  useEffect(() => {  
     setDbEndereco([]);
     selecionarTodos();
   }, []);
@@ -62,14 +45,22 @@ export default function CategoriasScreen() {
             numero: linha.val().numero,
             cidade: linha.val().cidade,
             estado: linha.val().estado,
-            bairro: linha.val().bairro
+            bairro: linha.val().bairro,
           });
         });
         setDbEndereco(itens);
       });
   };
 
-  const selecionar = (key, tipoEndereco, logradouro, numero, cidade, estado, bairro) => {
+  const selecionar = (
+    key,
+    tipoEndereco,
+    logradouro,
+    numero,
+    cidade,
+    estado,
+    bairro
+  ) => {
     setKey(key);
     setTipoEndereco(tipoEndereco);
     setLogradouro(logradouro);
@@ -80,7 +71,7 @@ export default function CategoriasScreen() {
     setBotaoAlterarExcluir(false);
     setBotaoInserir(true);
   };
-  
+
   const cancelar = () => {
     setKey('');
     setTipoEndereco('');
@@ -95,34 +86,41 @@ export default function CategoriasScreen() {
     setBotaoInserir(false);
   };
 
-
-
   const inserirEndereco = () => {
     try {
       firebase
         .database()
         .ref('dbEndereco')
-        .push({ tipoEndereco: tipoEndereco,
-            logradouro: logradouro,
-            numero: numero,
-            cidade: cidade,
-            estado: estado,
-            bairro: bairro });
+        .push({
+          tipoEndereco: tipoEndereco,
+          logradouro: logradouro,
+          numero: numero,
+          cidade: cidade,
+          estado: estado,
+          bairro: bairro,
+        });
       alert('Registro inserido com sucesso!');
-      navigation.navigate('Carrinho')
+      navigation.navigate('Carrinho');
       cancelar();
     } catch (e) {
       alert('Erro ao inserir!');
     }
-  }
- 
+  };
+
   const alterarEndereco = () => {
     try {
       firebase
         .database()
         .ref('dbEndereco')
         .child(key)
-        .update({ tipoEndereco: tipoEndereco, logradouro: logradouro, numero: numero, cidae: cidade, estado: estado, bairro: bairro });
+        .update({
+          tipoEndereco: tipoEndereco,
+          logradouro: logradouro,
+          numero: numero,
+          cidae: cidade,
+          estado: estado,
+          bairro: bairro,
+        });
       alert('Registro alterado com sucesso!');
       cancelar();
     } catch (e) {
@@ -150,7 +148,7 @@ export default function CategoriasScreen() {
       },
     ]);
   };
-    
+
   return (
     <ScrollView>
       <Card style={{ margin: 10 }}>
@@ -201,6 +199,7 @@ export default function CategoriasScreen() {
           />
           <Paragraph style={{ marginTop: 20 }}>Estado: </Paragraph>
           <TextInput
+            //style={{display: 'none'}}
             onChangeText={setEstado}
             value={estado}
             mode="outlined"
@@ -231,7 +230,7 @@ export default function CategoriasScreen() {
             icon="cancel"
             mode="contained"
             style={styles.buttonCrud}
-            onPress={() => cancelar()}></Button>                   
+            onPress={() => cancelar()}></Button>  
         </Card.Actions>
       </Card>
       <List.Section>
@@ -241,14 +240,24 @@ export default function CategoriasScreen() {
           renderItem={({ item }) => {
             return (
               <List.Item
-                title={item.logradouro}
-                left={(props) => <List.Icon icon="star" />}
-                onPress={() => selecionar(item.key, item.tipoEndereco, item.logradouro, item.numero, item.cidade, item.estado, item.bairro)}
+                title={item.tipoEndereco}
+                left={(props) => <List.Icon icon="arrow-right" />}
+                onPress={() =>
+                  selecionar(
+                    item.key,
+                    item.tipoEndereco,
+                    item.logradouro,
+                    item.numero,
+                    item.cidade,
+                    item.estado,
+                    item.bairro
+                  )
+                }
               />
             );
           }}
         />
       </List.Section>
     </ScrollView>
-  );  
-}  
+  );
+}

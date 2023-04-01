@@ -47,8 +47,6 @@ const ProdutoScreen = ({ navigation }) => {
     navigation.navigate('Carrinho');
   };
 
-  
-
   return (
     <ScrollView>
       <Card>

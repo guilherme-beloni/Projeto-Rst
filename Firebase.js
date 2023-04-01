@@ -15,6 +15,7 @@ if (!firebase.apps.length) {
 }
 
 export default firebase;
-
+  
 
 //Link:https://console.firebase.google.com/project/guidbtoledo/database/guidbtoledo-default-rtdb/data?hl=pt-br
+
